@@ -27,6 +27,9 @@ const getElementsDeck = () => {
     return elementDeck;
 }
 
+let movieDeck = Array.from(getMoviesDeck())
+let elementDeck = Array.from(getElementsDeck())
+
 const getElement = (deck) => {
   if (deck.length === 0) {
     console.warn("El mazo está vacío");
@@ -40,28 +43,25 @@ const mostrarPelicula = () => {
   const btnMovie = document.querySelector('#btnpelicula');
   const divPelicula = document.querySelector('#pelicula-caratula');
 
-  if (!btnMovie || !divPelicula) {
-    console.error('No se encontró el botón o el contenedor');
-    return;
-  }
-
   btnMovie.addEventListener('click', () => {
+    if (movieDeck.length > 0){
     const movie = getElement(movieDeck);
     const imgMovie = document.createElement('img');
     imgMovie.src = `assets/movies/${movie}.jpg`;
     imgMovie.classList.add('elemento');
-    divPelicula.appendChild(imgMovie);
-  });
+    const imagenAnterior = divPelicula.querySelector("img");
+    if (imagenAnterior){
+        divPelicula.replaceChild(imgMovie, imagenAnterior)
+    }
+    else{
+        divPelicula.appendChild(imgMovie);
+    }
+}})
 };
 
 const Adivina = () => {
   const btnAdivina = document.querySelector('#btnadivina');
   const divElemento = document.querySelector('#elementos-pelicula');
-
-  if (!btnAdivina || !divElemento) {
-    console.error('No se encontró el botón o el contenedor');
-    return;
-  }
 
   btnAdivina.addEventListener('click', () => {
     const elemento = getElement(elementDeck);
@@ -76,7 +76,6 @@ const Adivina = () => {
 
 document.addEventListener('DOMContentLoaded', mostrarPelicula);
 document.addEventListener('DOMContentLoaded', Adivina);
-let movieDeck = getMoviesDeck()
-let elementDeck = getElementsDeck()
+
 
 
