@@ -27,23 +27,56 @@ const getElementsDeck = () => {
     return elementDeck;
 }
 
-const quitarPeli = (listaPelis) => {
-    if (listaPelis.length === 0) {
-        throw ("No hay mas");
-    }
-    else {
-        let tarjeton = listaPelis.pop();
-        return tarjeton;
-    }
-}
+const getElement = (deck) => {
+  if (deck.length === 0) {
+    console.warn("El mazo está vacío");
+    return null;
+  }
+  return deck.pop(); // quita y devuelve el último elemento
+};
 
-const clickQuitar = () => {
-    const botonQuitar = document.getElementById("btnMostrar")
-    botonQuitar.addEventListener("click", ()=>{
-        pelicula = quitarPeli(movieDeck)
-    })
-}
 
+const mostrarPelicula = () => {
+  const btnMovie = document.querySelector('#btnpelicula');
+  const divPelicula = document.querySelector('#pelicula-caratula');
+
+  if (!btnMovie || !divPelicula) {
+    console.error('No se encontró el botón o el contenedor');
+    return;
+  }
+
+  btnMovie.addEventListener('click', () => {
+    const movie = getElement(movieDeck);
+    const imgMovie = document.createElement('img');
+    imgMovie.src = `assets/movies/${movie}.jpg`;
+    imgMovie.classList.add('elemento');
+    divPelicula.appendChild(imgMovie);
+  });
+};
+
+const Adivina = () => {
+  const btnAdivina = document.querySelector('#btnadivina');
+  const divElemento = document.querySelector('#elementos-pelicula');
+
+  if (!btnAdivina || !divElemento) {
+    console.error('No se encontró el botón o el contenedor');
+    return;
+  }
+
+  btnAdivina.addEventListener('click', () => {
+    const elemento = getElement(elementDeck);
+    const imgElemento = document.createElement('img');
+    imgElemento.src = `assets/characters/${elemento}.jpg`;
+    imgElemento.classList.add('elemento');
+    divElemento.appendChild(imgElemento);
+  });
+};
+
+
+
+document.addEventListener('DOMContentLoaded', mostrarPelicula);
+document.addEventListener('DOMContentLoaded', Adivina);
 let movieDeck = getMoviesDeck()
 let elementDeck = getElementsDeck()
+
 
