@@ -40,8 +40,8 @@ const getElement = (deck) => {
 
 
 const mostrarPelicula = () => {
-  const btnMovie = document.querySelector('#btnpelicula');
-  const divPelicula = document.querySelector('#pelicula-caratula');
+  const btnMovie = document.getElementById('btnpelicula');
+  const divPelicula = document.getElementById('pelicula-caratula');
 
   btnMovie.addEventListener('click', () => {
     if (movieDeck.length > 0){
@@ -61,8 +61,8 @@ const mostrarPelicula = () => {
 };
 
 const Adivina = () => {
-  const btnAdivina = document.querySelector('#btnadivina');
-  const divElemento = document.querySelector('#elementos-pelicula');
+  const btnAdivina = document.getElementById('btnadivina');
+  const divElemento = document.getElementById('elementos-pelicula');
 
   btnAdivina.addEventListener('click', () => {
     if (elementDeck.length > 0){
@@ -75,7 +75,20 @@ const Adivina = () => {
 });
 };
 
+const Reiniciar = () => {
+    const btnReiniciar = document.getElementById("btnreiniciar")
+    btnReiniciar.addEventListener("click", () => {
+      let pelis= document.getElementById("pelicula-caratula")
+      let personajes= document.getElementById("elementos-pelicula")
+      pelis.innerHTML = ""
+      personajes.innerHTML = ""
+      movieDeck = Array.from(getMoviesDeck())
+      elementDeck = Array.from(getElementsDeck())
+    })
+}
+
 
 
 document.addEventListener('DOMContentLoaded', mostrarPelicula);
 document.addEventListener('DOMContentLoaded', Adivina);
+document.addEventListener('DOMContentLoaded', Reiniciar);
