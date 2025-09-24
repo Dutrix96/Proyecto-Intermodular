@@ -27,23 +27,52 @@ const getElementsDeck = () => {
     return elementDeck;
 }
 
-const quitarPeli = (listaPelis) => {
-    if (listaPelis.length === 0) {
-        throw ("No hay mas");
+let movieDeck = Array.from(getMoviesDeck())
+let elementDeck = Array.from(getElementsDeck())
+
+const getElement = (deck) => {
+  if (deck.length === 0) {
+    console.warn("El mazo está vacío");
+    return null;
+  }
+  return deck.pop(); // quita y devuelve el último elemento
+};
+
+
+const mostrarPelicula = () => {
+  const btnMovie = document.querySelector('#btnpelicula');
+  const divPelicula = document.querySelector('#pelicula-caratula');
+
+  btnMovie.addEventListener('click', () => {
+    if (movieDeck.length > 0){
+    const movie = getElement(movieDeck);
+    const imgMovie = document.createElement('img');
+    imgMovie.src = `assets/movies/${movie}.jpg`;
+    imgMovie.classList.add('elemento');
+    const imagenAnterior = divPelicula.querySelector("img");
+    if (imagenAnterior){
+        divPelicula.replaceChild(imgMovie, imagenAnterior)
     }
-    else {
-        let tarjeton = listaPelis.pop();
-        return tarjeton;
+    else{
+        divPelicula.appendChild(imgMovie);
     }
-}
+}})
+};
 
-const clickQuitar = () => {
-    const botonQuitar = document.getElementById("btnMostrar")
-    botonQuitar.addEventListener("click", ()=>{
-        pelicula = quitarPeli(movieDeck)
-    })
-}
+const Adivina = () => {
+  const btnAdivina = document.querySelector('#btnadivina');
+  const divElemento = document.querySelector('#elementos-pelicula');
 
-let movieDeck = getMoviesDeck()
-let elementDeck = getElementsDeck()
+  btnAdivina.addEventListener('click', () => {
+    const elemento = getElement(elementDeck);
+    const imgElemento = document.createElement('img');
+    imgElemento.src = `assets/characters/${elemento}.jpg`;
+    imgElemento.classList.add('elemento');
+    divElemento.appendChild(imgElemento);
+  });
+};
 
+
+
+document.addEventListener('DOMContentLoaded', mostrarPelicula);
+document.addEventListener('DOMContentLoaded', Adivina);
