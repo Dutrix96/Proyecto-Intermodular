@@ -18,7 +18,7 @@ const getMoviesDeck = () => {
 const getElementsDeck = () => {
     let elementDeck = []
     for(let i = 1; i <= NMOVIES; i++) {
-        for(let j = 1; j <= NELEMENTSPMOVIE; j++) {
+        for(let j = 0; j < NELEMENTSPMOVIE; j++) {
             elementDeck.push("0"+i+"C"+j)
         } 
     }
@@ -52,6 +52,7 @@ const mostrarPelicula = () => {
     const imagenAnterior = divPelicula.querySelector("img");
     if (imagenAnterior){
         divPelicula.replaceChild(imgMovie, imagenAnterior)
+        
     }
     else{
         divPelicula.appendChild(imgMovie);
@@ -64,18 +65,17 @@ const Adivina = () => {
   const divElemento = document.querySelector('#elementos-pelicula');
 
   btnAdivina.addEventListener('click', () => {
+    if (elementDeck.length > 0){
     const elemento = getElement(elementDeck);
     const imgElemento = document.createElement('img');
     imgElemento.src = `assets/characters/${elemento}.jpg`;
     imgElemento.classList.add('elemento');
     divElemento.appendChild(imgElemento);
-  });
+}
+});
 };
 
 
 
 document.addEventListener('DOMContentLoaded', mostrarPelicula);
 document.addEventListener('DOMContentLoaded', Adivina);
-
-
-
