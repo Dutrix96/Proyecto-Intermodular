@@ -65,15 +65,28 @@ const Adivina = () => {
   const divElemento = document.getElementById('elementos-pelicula');
 
   btnAdivina.addEventListener('click', () => {
-    if (elementDeck.length > 0){
-    const elemento = getElement(elementDeck);
-    const imgElemento = document.createElement('img');
-    imgElemento.src = `assets/characters/${elemento}.jpg`;
-    imgElemento.classList.add('elemento');
-    divElemento.appendChild(imgElemento);
-}
-});
+    if (elementDeck.length > 0) {
+      const elemento = getElement(elementDeck);
+      const imgElemento = document.createElement('img');
+      imgElemento.src = `assets/characters/${elemento}.jpg`;
+      imgElemento.classList.add('elemento');
+
+      imgElemento.setAttribute("draggable", "true");
+
+      imgElemento.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", elemento);
+        imgElemento.classList.add("arrastrando");
+      });
+
+      imgElemento.addEventListener("dragend", () => {
+        imgElemento.classList.remove("arrastrando");
+      });
+
+      divElemento.appendChild(imgElemento);
+    }
+  });
 };
+
 
 const Reiniciar = () => {
     const btnReiniciar = document.getElementById("btnreiniciar")
