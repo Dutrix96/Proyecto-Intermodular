@@ -95,6 +95,14 @@ const Adivina = () => {
   });
 };
 
+const getPrefix2 = (str) => str.slice(0, 2);
+
+const getCurrentMovieId = () => {
+  const img = document.querySelector('#pelicula-caratula img');
+  if (!img) return null;
+  const file = img.src.split('/').pop();
+  return getPrefix2(file);
+};
 
 const prepararDrop = () => {
   document.querySelectorAll('.adivinar').forEach(zona => {
@@ -104,24 +112,39 @@ const prepararDrop = () => {
       zona.classList.add('zona-hover');
     });
 
-    zona.addEventListener('dragleave', () => zona.classList.remove('zona-hover'));
+    zona.addEventListener('dragleave', () => {
+      zona.classList.remove('zona-hover');
+    });
 
     zona.addEventListener('drop', (e) => {
       e.preventDefault();
       zona.classList.remove('zona-hover');
 
-      const id = e.dataTransfer.getData('text/plain');
-      const carta = document.querySelector(`.elemento[data-id="${id}"]`);
+      const cartaId = e.dataTransfer.getData('text/plain');
+      const carta = document.querySelector(`.elemento[data-id="${cartaId}"]`) 
+                 || document.querySelector(`.elemento img[src*="${cartaId}.jpg"]`)?.closest('.elemento');
       if (!carta) return;
 
-      zona.innerHTML = "";         
-      zona.appendChild(carta);     
+      const cartaPrefix = getPrefix2(cartaId);
+      const moviePrefix = getCurrentMovieId();
+
+      if (!moviePrefix) return;
+
+     if (cartaPrefix === moviePrefix) {
+      zona.innerHTML = "";
+      zona.appendChild(carta);
+      zona.classList.add('drop-correcto');
+      }
+
+      else {
+        zona.classList.add('drop-invalido');
+        setTimeout(() => zona.classList.remove('drop-invalido'), 600);
+      }
     });
   });
 };
 
 document.addEventListener('DOMContentLoaded', prepararDrop);
-
 
 
 const Reiniciar = () => {

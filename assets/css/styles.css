@@ -68,7 +68,6 @@ html, body {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-
   opacity: 0.2;
 }
 
@@ -108,3 +107,20 @@ img.elemento {
   flex: 1 1 200px;   
   max-width: 220px;
 }
+
+.drop-correcto {
+  border-color: #4caf50 !important;
+}
+
+.drop-invalido {
+  border-color: #ff4d4f !important;
+  animation: shake 0.4s linear;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+}
+
