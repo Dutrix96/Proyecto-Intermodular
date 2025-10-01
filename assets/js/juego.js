@@ -1,7 +1,3 @@
-/**
- * Vamos a crear dos montones de tarjetas, uno de películas y otro de recursos relacionados:
- * 
- */
 const NMOVIES = 5
 const NELEMENTSPMOVIE = 3
 const getMoviesDeck = () => {
@@ -9,8 +5,6 @@ const getMoviesDeck = () => {
     for(let i = 1; i <= NMOVIES; i++) {
         movieDeck.push("0"+i+"M")
     }
-    //Barajamos con un método dela librería Underscore. Esta librería ofrece muchas funciones,
-    //en este caso uso shuffle que recibe un arrayy lo devuelve de forma aleatoria
     movieDeck = _.shuffle(movieDeck)
     return movieDeck;
 }
@@ -22,7 +16,6 @@ const getElementsDeck = () => {
             elementDeck.push("0"+i+"C"+j)
         } 
     }
-    //Barajamos
     elementDeck = _.shuffle(elementDeck)
     return elementDeck;
 }
@@ -35,7 +28,7 @@ const getElement = (deck) => {
     console.warn("El mazo está vacío");
     return null;
   }
-  return deck.pop(); // quita y devuelve el último elemento
+  return deck.pop();
 };
 
 
@@ -62,45 +55,90 @@ const mostrarPelicula = () => {
 
 const Adivina = () => {
   const btnAdivina = document.getElementById('btnadivina');
-  const divElemento = document.getElementById('elementos-pelicula');
+  const zonaLista = document.getElementById('elementos-pelicula');
 
   btnAdivina.addEventListener('click', () => {
-    if (elementDeck.length > 0) {
-      const elemento = getElement(elementDeck);
-      const imgElemento = document.createElement('img');
-      imgElemento.src = `assets/characters/${elemento}.jpg`;
-      imgElemento.classList.add('elemento');
+    if (elementDeck.length === 0) return;
 
-      imgElemento.setAttribute("draggable", "true");
+    const idCarta = getElement(elementDeck);              
+    const src = `assets/characters/${idCarta}.jpg`;
 
-      imgElemento.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("text/plain", elemento);
-        imgElemento.classList.add("arrastrando");
-      });
+    const carta = document.createElement('div');
+    carta.classList.add('elemento');                    
+    carta.setAttribute('draggable', 'true');
+    carta.dataset.id = idCarta;                         
 
-      imgElemento.addEventListener("dragend", () => {
-        imgElemento.classList.remove("arrastrando");
-      });
+    const img = document.createElement('img');
+    img.src = src;
+    img.classList.add('recurso');                         
+    carta.appendChild(img);
 
-      divElemento.appendChild(imgElemento);
-    }
+    carta.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', idCarta);
+      e.dataTransfer.effectAllowed = 'move';
+      carta.classList.add('arrastrando');
+      const ghost = carta.cloneNode(true);
+      ghost.style.position = 'absolute';
+      ghost.style.top = '-10000px';
+      ghost.style.left = '-10000px';
+      document.body.appendChild(ghost);
+      e.dataTransfer.setDragImage(ghost, ghost.offsetWidth / 2, ghost.offsetHeight / 2);
+      carta._ghost = ghost;
+    });
+
+    carta.addEventListener('dragend', () => {
+      carta.classList.remove('arrastrando');
+      if (carta._ghost) { document.body.removeChild(carta._ghost); carta._ghost = null; }
+    });
+
+    zonaLista.appendChild(carta);
   });
 };
 
 
+const prepararDrop = () => {
+  document.querySelectorAll('.adivinar').forEach(zona => {
+
+    zona.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      zona.classList.add('zona-hover');
+    });
+
+    zona.addEventListener('dragleave', () => zona.classList.remove('zona-hover'));
+
+    zona.addEventListener('drop', (e) => {
+      e.preventDefault();
+      zona.classList.remove('zona-hover');
+
+      const id = e.dataTransfer.getData('text/plain');
+      const carta = document.querySelector(`.elemento[data-id="${id}"]`);
+      if (!carta) return;
+
+      zona.innerHTML = "";         
+      zona.appendChild(carta);     
+    });
+  });
+};
+
+document.addEventListener('DOMContentLoaded', prepararDrop);
+
+
+
 const Reiniciar = () => {
-    const btnReiniciar = document.getElementById("btnreiniciar")
-    btnReiniciar.addEventListener("click", () => {
-      let pelis= document.getElementById("pelicula-caratula")
-      let personajes= document.getElementById("elementos-pelicula")
-      pelis.innerHTML = ""
-      personajes.innerHTML = ""
-      movieDeck = Array.from(getMoviesDeck())
-      elementDeck = Array.from(getElementsDeck())
+  const btnReiniciar = document.getElementById("btnreiniciar")
+  btnReiniciar.addEventListener("click", () => {
+    let pelis = document.getElementById("pelicula-caratula")
+    let personajes = document.getElementById("elementos-pelicula")
+    pelis.innerHTML = ""
+    personajes.innerHTML = ""
+    document.querySelectorAll(".adivinar").forEach(div => {
+      div.innerHTML = ""
+      div.classList.remove("ocupado")
     })
+    movieDeck = Array.from(getMoviesDeck())
+    elementDeck = Array.from(getElementsDeck())
+  })
 }
-
-
 
 document.addEventListener('DOMContentLoaded', mostrarPelicula);
 document.addEventListener('DOMContentLoaded', Adivina);
