@@ -95,8 +95,9 @@ const Adivina = () => {
   });
 };
 
-const getPrefix2 = (str) => str.slice(0, 2);
+let intentosRestantes = 4;
 
+const getPrefix2 = (s) => s.slice(0, 2);
 const getCurrentMovieId = () => {
   const img = document.querySelector('#pelicula-caratula img');
   if (!img) return null;
@@ -104,65 +105,122 @@ const getCurrentMovieId = () => {
   return getPrefix2(file);
 };
 
+const actualizarContador = () => {
+  const contador = document.getElementById('contador-intentos');
+  if (contador) contador.textContent = `Intentos restantes: ${intentosRestantes}`;
+};
+
+const checkVictoria = () => {
+  const slots = Array.from(document.querySelectorAll('.adivinar'));
+  const ok = slots.every(z => z.querySelector('.elemento.bloqueada'));
+  if (ok) document.getElementById('game-win').style.display = 'flex';
+};
+
 const prepararDrop = () => {
+  document.addEventListener('dragstart', (e) => {
+    if (e.target.closest('.bloqueada')) e.preventDefault();
+  });
+
   document.querySelectorAll('.adivinar').forEach(zona => {
 
     zona.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      zona.classList.add('zona-hover');
+      if (intentosRestantes > 0) {
+        e.preventDefault();
+        zona.classList.add('zona-hover');
+      }
     });
 
-    zona.addEventListener('dragleave', () => {
-      zona.classList.remove('zona-hover');
-    });
+    zona.addEventListener('dragleave', () => zona.classList.remove('zona-hover'));
 
     zona.addEventListener('drop', (e) => {
       e.preventDefault();
       zona.classList.remove('zona-hover');
 
+      if (intentosRestantes <= 0) return;
+
       const cartaId = e.dataTransfer.getData('text/plain');
-      const carta = document.querySelector(`.elemento[data-id="${cartaId}"]`) 
-                 || document.querySelector(`.elemento img[src*="${cartaId}.jpg"]`)?.closest('.elemento');
+      const carta =
+        document.querySelector(`.elemento[data-id="${cartaId}"]`) ||
+        document.querySelector(`.elemento img[src*="${cartaId}.jpg"]`)?.closest('.elemento');
       if (!carta) return;
 
-      const cartaPrefix = getPrefix2(cartaId);
+      const cartaPrefix = cartaId.slice(0, 2);
       const moviePrefix = getCurrentMovieId();
-
       if (!moviePrefix) return;
 
-     if (cartaPrefix === moviePrefix) {
-      zona.innerHTML = "";
-      zona.appendChild(carta);
-      zona.classList.add('drop-correcto');
-      }
-
-      else {
+      if (cartaPrefix === moviePrefix) {
+        zona.innerHTML = "";
+        zona.appendChild(carta);
+        zona.classList.add('drop-correcto');
+        carta.draggable = false;
+        carta.classList.add('bloqueada');
+        actualizarContador();
+        checkVictoria();
+      } else {
+        intentosRestantes = Math.max(0, intentosRestantes - 1);
+        actualizarContador();
         zona.classList.add('drop-invalido');
         setTimeout(() => zona.classList.remove('drop-invalido'), 600);
+        if (intentosRestantes === 0) {
+          document.getElementById("game-over").style.display = "flex";
+        }
       }
     });
   });
 };
-
-document.addEventListener('DOMContentLoaded', prepararDrop);
-
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('btnContinuar');
+  if (btn) btn.addEventListener('click', () => {
+    document.getElementById('btnreiniciar').click();
+    document.getElementById('game-win').style.display = 'none';
+  });
+});
 
 const Reiniciar = () => {
-  const btnReiniciar = document.getElementById("btnreiniciar")
+  const btnReiniciar = document.getElementById("btnreiniciar");
   btnReiniciar.addEventListener("click", () => {
-    let pelis = document.getElementById("pelicula-caratula")
-    let personajes = document.getElementById("elementos-pelicula")
-    pelis.innerHTML = ""
-    personajes.innerHTML = ""
+    let pelis = document.getElementById("pelicula-caratula");
+    let personajes = document.getElementById("elementos-pelicula");
+    pelis.innerHTML = "";
+    personajes.innerHTML = "";
     document.querySelectorAll(".adivinar").forEach(div => {
-      div.innerHTML = ""
-      div.classList.remove("ocupado")
-    })
-    movieDeck = Array.from(getMoviesDeck())
-    elementDeck = Array.from(getElementsDeck())
-  })
-}
+      div.innerHTML = "";
+      div.classList.remove("drop-correcto");
+    });
+    document.querySelectorAll(".elemento.bloqueada").forEach(c => {
+      c.draggable = true;
+      c.classList.remove("bloqueada");
+    });
+    movieDeck = Array.from(getMoviesDeck());
+    elementDeck = Array.from(getElementsDeck());
+    intentosRestantes = 4;
+    actualizarContador();
+    document.getElementById("game-over").style.display = "none";
+    document.getElementById('game-win').style.display = 'none';
+  });
+};
 
-document.addEventListener('DOMContentLoaded', mostrarPelicula);
-document.addEventListener('DOMContentLoaded', Adivina);
-document.addEventListener('DOMContentLoaded', Reiniciar);
+
+document.addEventListener('DOMContentLoaded', () => {
+  mostrarPelicula();
+  Adivina();
+  Reiniciar();
+  prepararDrop();
+  actualizarContador();
+
+  const btnReintentar = document.getElementById("btnReintentar");
+  if (btnReintentar) {
+    btnReintentar.addEventListener("click", () => {
+      document.getElementById("btnreiniciar").click();
+      document.getElementById("game-over").style.display = "none";
+    });
+  }
+
+  const btnContinuar = document.getElementById('btnContinuar');
+  if (btnContinuar) {
+    btnContinuar.addEventListener('click', () => {
+      document.getElementById('btnreiniciar').click();
+      document.getElementById('game-win').style.display = 'none';
+    });
+  }
+});

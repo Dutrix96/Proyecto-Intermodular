@@ -14,6 +14,18 @@
 
     <div class="row mt-2">
         <div class="col text-center">
+            <div id="game-over">
+                <div class="game-over-box">
+                    <h1>¡Has perdido!</h1>
+                    <button id="btnReintentar">Reintentar</button>
+                 </div>
+            </div>
+            <div id="game-win">
+                <div class="game-over-box">
+                    <h1>¡Has ganado!</h1>
+                    <button id="btnContinuar">Continuar</button>
+                </div>
+            </div>
             <button class="btn btn-primary" id="btnreiniciar">Reiniciar</button>
             <button class="btn btn-primary" id="btnpelicula">Mostrar película</button>
             <button class="btn btn-primary" id="btnadivina">Adivina</button>
@@ -26,13 +38,14 @@
             <div class="col" id="pelicula-caratula"></div>
             <div class="col adivinar"></div>
             <div class="col adivinar"></div>
-            <div class="col adivinar"></div>
-            
+            <div class="col adivinar"></div>     
         </div>
     </div>
     <div class="row container mt-2">
+        <h1>Adivina</h1>
+            <div id="contador-intentos">Intentos restantes: 4</div>
+            <div id="elementos-pelicula"></div>
         <div class="col">
-            <h1>Adivina</h1>
             <div id="elementos-pelicula">
             </div>
         </div>
